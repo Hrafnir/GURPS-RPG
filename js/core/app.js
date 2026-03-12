@@ -1,11 +1,12 @@
-/* Version: #10 */
+/* Version: #15 */
 
 // === SEKSJON: HOVEDAPPLIKASJON (APP) ===
 const App = (function() {
     
     // Internt state-objekt for å holde styr på applikasjonens tilstand
     const state = {
-        currentView: 'view-main-menu'
+        currentView: 'view-main-menu',
+        isLocalMapInitialized: false // Holder styr på om kartet har blitt satt opp enda
     };
 
     // Cache for DOM-elementer for å unngå å søke i DOMen gjentatte ganger (bedre ytelse)
@@ -103,6 +104,14 @@ const App = (function() {
             return;
         }
 
+        // --- HÅNDTERING FØR VI FORLATER NÅVÆRENDE SKJERM ---
+        if (state.currentView === 'view-local-map') {
+            if (typeof LocalMap !== 'undefined') {
+                Logger.info('App', 'Pauser lokal kartmotor (spilleren forlater skjermen).');
+                LocalMap.stop();
+            }
+        }
+
         // Skjul nåværende visning
         if (currentView) {
             currentView.classList.remove('active');
@@ -114,6 +123,24 @@ const App = (function() {
         // Vis ny visning
         targetView.classList.remove('hidden');
         targetView.classList.add('active');
+
+        // --- HÅNDTERING ETTER VI HAR GÅTT INN I NY SKJERM ---
+        if (targetViewId === 'view-local-map') {
+            if (typeof LocalMap !== 'undefined') {
+                // Vi initialiserer kartet her fordi elementet må ha mistet '.hidden' 
+                // for at canvaset skal vite hvor stort det kan være.
+                if (!state.isLocalMapInitialized) {
+                    Logger.info('App', 'Første gang spilleren ser kartet. Initialiserer LocalMap.');
+                    LocalMap.init();
+                    state.isLocalMapInitialized = true;
+                }
+                
+                Logger.info('App', 'Starter lokal kartmotor.');
+                LocalMap.start();
+            } else {
+                Logger.error('App', 'LocalMap er ikke definert! Sjekk index.html.');
+            }
+        }
 
         // Oppdater tilstand
         state.currentView = targetViewId;
@@ -137,4 +164,4 @@ document.addEventListener('DOMContentLoaded', () => {
     App.init();
 });
 
-/* Version: #10 */
+/* Version: #15 */
