@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GURPS Midgard - Isometrisk RPG</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="app-container">
+        
+        <section id="view-main-menu" class="view-section active">
+            <h1>GURPS Midgard</h1>
+            <p>Et Low Fantasy Rollespill</p>
+            <button id="btn-new-game">Nytt Spill (Karakterbygging)</button>
+            <button id="btn-load-game">Last Inn Spill</button>
+        </section>
+
+        <section id="view-character-creation" class="view-section hidden">
+            <h2>Karakterbygging</h2>
+            <div id="char-creation-content">
+                <p>Klargjør skjebnens terninger...</p>
+            </div>
+            <button id="btn-finish-char">Start Eventyret (Gå til Lokalt Kart)</button>
+        </section>
+
+        <section id="view-local-map" class="view-section hidden">
+            <h2>Lokalt Område</h2>
+            <div id="local-map-container">
+                </div>
+            <button id="btn-to-regional">Forlat området (Gå til Regionalt Kart)</button>
+        </section>
+
+        <section id="view-regional-map" class="view-section hidden">
+            <h2>Midgard Regionalt Kart</h2>
+            <div id="regional-map-container">
+                </div>
+            <button id="btn-to-local">Gå inn i område (Gå til Lokalt Kart)</button>
+        </section>
+
+    </div>
+
+    <script src="js/core/logger.js"></script>
+    
+    <script src="js/core/app.js"></script>
+    
+    <script>
+        console.log("[System] index.html er lastet og DOM er klar.");
+    </script>
+</body>
+</html>
