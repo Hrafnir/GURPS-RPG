@@ -1,13 +1,27 @@
-/* Version: #12 */
+/* Version: #16 */
 
 // === SEKSJON: KARAKTERBYGGING BRUKERGRENSESNITT ===
 const CharacterUI = (function() {
 
     let container = null;
 
+    // Definerer stiene til de 10 standardportrettene (krever at filene eksisterer i mappen)
+    const presetPortraits = [
+        { id: 'm1', path: 'assets/portraits/male_1.jpg', label: 'M1' },
+        { id: 'm2', path: 'assets/portraits/male_2.jpg', label: 'M2' },
+        { id: 'm3', path: 'assets/portraits/male_3.jpg', label: 'M3' },
+        { id: 'm4', path: 'assets/portraits/male_4.jpg', label: 'M4' },
+        { id: 'm5', path: 'assets/portraits/male_5.jpg', label: 'M5' },
+        { id: 'f1', path: 'assets/portraits/female_1.jpg', label: 'K1' },
+        { id: 'f2', path: 'assets/portraits/female_2.jpg', label: 'K2' },
+        { id: 'f3', path: 'assets/portraits/female_3.jpg', label: 'K3' },
+        { id: 'f4', path: 'assets/portraits/female_4.jpg', label: 'K4' },
+        { id: 'f5', path: 'assets/portraits/female_5.jpg', label: 'K5' }
+    ];
+
     // === SEKSJON: INITIALISERING OG DOM-OPPSETT ===
     function init() {
-        Logger.info('CharacterUI', 'Initialiserer brukergrensesnitt for karakterbygging (V2 med persistens og portrett)...');
+        Logger.info('CharacterUI', 'Initialiserer brukergrensesnitt for karakterbygging (V3 med preset portretter)...');
         container = document.getElementById('char-creation-content');
         
         if (!container) {
@@ -27,16 +41,36 @@ const CharacterUI = (function() {
     function buildUIStructure() {
         Logger.debug('CharacterUI', 'Bygger DOM-struktur for karakterbygging...');
         
+        // Generer HTML for miniatyrbildene til forhåndsvalg
+        let presetsHTML = '';
+        presetPortraits.forEach(preset => {
+            presetsHTML += `
+                <button onclick="CharacterUI.setPresetPortrait('${preset.path}')" 
+                        style="width: 35px; height: 35px; margin: 2px; padding: 0; font-size: 0.7rem; background-color: var(--color-iron-dark); border: 1px solid var(--color-iron); color: var(--color-text-main); cursor: pointer;"
+                        title="Velg portrett ${preset.label}">
+                    ${preset.label}
+                </button>
+            `;
+        });
+
         container.innerHTML = `
             <div id="char-header" style="border-bottom: 2px solid var(--color-iron); padding-bottom: 1rem; margin-bottom: 1rem; display: flex; gap: 2rem; align-items: flex-start;">
                 
-                <div id="char-portrait-container" style="text-align: center; width: 150px;">
-                    <div style="width: 150px; height: 150px; border: 2px solid var(--color-iron); background-color: #000; overflow: hidden; display: flex; align-items: center; justify-content: center; margin-bottom: 10px;">
-                        <img id="char-portrait-img" src="" alt="Ingen portrett" style="max-width: 100%; max-height: 100%; display: none;">
+                <div id="char-portrait-container" style="text-align: center; width: 220px;">
+                    <div style="width: 150px; height: 150px; margin: 0 auto; border: 2px solid var(--color-iron); background-color: #000; overflow: hidden; display: flex; align-items: center; justify-content: center; margin-bottom: 10px;">
+                        <img id="char-portrait-img" src="" alt="Ingen portrett" style="width: 100%; height: 100%; object-fit: cover; display: none;">
                         <span id="char-portrait-placeholder" style="color: var(--color-iron); font-size: 0.8rem;">[Bilde mangler]</span>
                     </div>
-                    <label for="portrait-upload" style="cursor: pointer; background: var(--color-iron-dark); color: var(--color-text-main); padding: 5px; font-size: 0.8rem; border: 1px solid var(--color-iron); display: block;">Last opp bilde</label>
+                    
+                    <label for="portrait-upload" style="cursor: pointer; background: var(--color-iron-dark); color: var(--color-text-main); padding: 5px; font-size: 0.8rem; border: 1px solid var(--color-iron); display: block; margin-bottom: 10px;">Last opp eget bilde</label>
                     <input type="file" id="portrait-upload" accept="image/*" style="display: none;">
+                    
+                    <div style="border-top: 1px dashed var(--color-iron); padding-top: 5px;">
+                        <span style="font-size: 0.8rem; color: var(--color-iron); display: block; margin-bottom: 5px;">Eller velg standard:</span>
+                        <div id="portrait-presets-container" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 2px;">
+                            ${presetsHTML}
+                        </div>
+                    </div>
                 </div>
 
                 <div style="flex-grow: 1;">
@@ -195,8 +229,6 @@ const CharacterUI = (function() {
                 }
             };
             reader.readAsText(file);
-            
-            // Nullstill input slik at samme fil kan velges igjen om nødvendig
             e.target.value = '';
         });
     }
@@ -267,7 +299,7 @@ const CharacterUI = (function() {
             <p><strong>Dodge:</strong> ${charData.secondary.Dodge}</p>
         `;
 
-        // Oppdater Dropdowns (Filtrer ut de som allerede er valgt)
+        // Oppdater Dropdowns
         updateDropdown('adv-select', catalogs.advantages, charData.advantages);
         updateDropdown('disadv-select', catalogs.disadvantages, charData.disadvantages);
         updateDropdown('skill-select', catalogs.skills, Object.keys(charData.skills));
@@ -276,7 +308,7 @@ const CharacterUI = (function() {
         const advList = document.getElementById('adv-list');
         advList.innerHTML = '';
         charData.advantages.forEach(id => {
-            if (!catalogs.advantages[id]) return; // Sikkerhetssjekk
+            if (!catalogs.advantages[id]) return; 
             const adv = catalogs.advantages[id];
             const li = document.createElement('li');
             li.style.marginBottom = '5px';
@@ -288,7 +320,7 @@ const CharacterUI = (function() {
         const disadvList = document.getElementById('disadv-list');
         disadvList.innerHTML = '';
         charData.disadvantages.forEach(id => {
-            if (!catalogs.disadvantages[id]) return; // Sikkerhetssjekk
+            if (!catalogs.disadvantages[id]) return; 
             const disadv = catalogs.disadvantages[id];
             const li = document.createElement('li');
             li.style.marginBottom = '5px';
@@ -300,7 +332,7 @@ const CharacterUI = (function() {
         const skillListElement = document.getElementById('skill-list');
         skillListElement.innerHTML = '';
         for (const [id, points] of Object.entries(charData.skills)) {
-            if (!catalogs.skills[id]) continue; // Sikkerhetssjekk
+            if (!catalogs.skills[id]) continue; 
             const skill = catalogs.skills[id];
             const level = Character.getCalculatedSkillLevel(id);
             const li = document.createElement('li');
@@ -325,7 +357,6 @@ const CharacterUI = (function() {
         const select = document.getElementById(selectId);
         select.innerHTML = '<option value="">-- Velg --</option>';
         
-        // Sorter katalogen alfabetisk på navn før vi legger den i dropdown
         const sortedKeys = Object.keys(catalog).sort((a, b) => {
             return catalog[a].name.localeCompare(catalog[b].name);
         });
@@ -342,6 +373,11 @@ const CharacterUI = (function() {
     // === SEKSJON: OFFENTLIGE METODER (TILGJENGELIG FOR INLINE HTML ONCLICK) ===
     return {
         init: init,
+        setPresetPortrait: function(path) {
+            Logger.info('CharacterUI', `Forhåndsvalgt portrett valgt: ${path}`);
+            Character.setPortrait(path);
+            render();
+        },
         changeAttr: function(attr, newVal) {
             Character.setAttribute(attr, newVal);
             render();
@@ -370,4 +406,4 @@ const CharacterUI = (function() {
     };
 })();
 
-/* Version: #12 */
+/* Version: #16 */
