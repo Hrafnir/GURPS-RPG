@@ -1,4 +1,4 @@
-/* Version: #5 */
+/* Version: #10 */
 
 // === SEKSJON: HOVEDAPPLIKASJON (APP) ===
 const App = (function() {
@@ -44,6 +44,14 @@ const App = (function() {
         if (domElements.buttons.newGame) {
             domElements.buttons.newGame.addEventListener('click', () => {
                 Logger.info('App', 'Bruker klikket på "Nytt Spill". Starter karakterbygging.');
+                
+                // INITIALISERER KARAKTER-UI NÅR VI GÅR INN I SKJERMEN
+                if (typeof CharacterUI !== 'undefined') {
+                    CharacterUI.init();
+                } else {
+                    Logger.error('App', 'CharacterUI er ikke definert! Sjekk at scriptet er lastet i index.html.');
+                }
+                
                 switchView('view-character-creation');
             });
         }
@@ -129,4 +137,4 @@ document.addEventListener('DOMContentLoaded', () => {
     App.init();
 });
 
-/* Version: #5 */
+/* Version: #10 */
