@@ -1,0 +1,150 @@
+/* Version: #4 */
+
+/* === SEKSJON: GLOBALE VARIABLER OG RESET === */
+:root {
+    /* Fargepalett: Low Fantasy / Norrønt */
+    --color-bg-dark: #1e1c1a;       /* Mørk tre/jord */
+    --color-text-main: #e2d8c3;     /* Pergament / Bein */
+    --color-accent-red: #8b2626;    /* Falmet blod / rød maling */
+    --color-iron: #5c6366;          /* Jern / stål */
+    --color-iron-dark: #3a3e40;     /* Mørkt jern */
+    
+    /* Typografi */
+    --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    --font-heading: 'Georgia', serif; /* Gir en litt eldre, bok-aktig følelse */
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--color-bg-dark);
+    color: var(--color-text-main);
+    font-family: var(--font-main);
+    line-height: 1.6;
+    overflow: hidden; /* Forhindrer scrollbars på rotnivå, vi styrer det internt */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100vw;
+}
+
+/* === SEKSJON: APP-KONTAINER OG VIEW-LOGIKK === */
+#app-container {
+    width: 100%;
+    height: 100%;
+    max-width: 1200px; /* Maks bredde for store skjermer */
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Grunnklasse for alle skjermer/faser */
+.view-section {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 2rem;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: var(--color-bg-dark);
+    transition: opacity 0.3s ease;
+}
+
+/* Logikk for å bytte skjerm */
+.view-section.hidden {
+    display: none;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.view-section.active {
+    display: flex;
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* === SEKSJON: TYPOGRAFI OG UI-ELEMENTER === */
+h1, h2, h3 {
+    font-family: var(--font-heading);
+    margin-bottom: 1rem;
+    color: var(--color-accent-red);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+h1 {
+    font-size: 3rem;
+    text-align: center;
+    margin-top: 10vh;
+}
+
+p {
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+/* Knapper */
+button {
+    background-color: var(--color-iron-dark);
+    color: var(--color-text-main);
+    border: 2px solid var(--color-iron);
+    padding: 10px 20px;
+    margin: 10px auto;
+    font-size: 1.2rem;
+    font-family: var(--font-heading);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    width: 80%;
+    max-width: 400px;
+    display: block;
+}
+
+button:hover {
+    background-color: var(--color-iron);
+    border-color: var(--color-accent-red);
+    color: white;
+}
+
+button:active {
+    background-color: var(--color-accent-red);
+    transform: translateY(2px);
+}
+
+/* === SEKSJON: SPESIFIKKE SKJERMER === */
+
+/* Hovedmeny */
+#view-main-menu {
+    justify-content: flex-start;
+}
+
+/* Karakterbygging */
+#char-creation-content {
+    flex-grow: 1;
+    border: 1px solid var(--color-iron);
+    padding: 1rem;
+    margin-bottom: 1rem;
+    overflow-y: auto;
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+/* Kart-kontainere (Forberedelse til grid/canvas) */
+#local-map-container,
+#regional-map-container {
+    flex-grow: 1;
+    border: 2px solid var(--color-iron);
+    margin-bottom: 1rem;
+    background-color: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--color-iron);
+}
+
+/* Version: #4 */
